@@ -1,40 +1,43 @@
-import React,{useState} from 'react';
+import React, { useState, useContext } from 'react';
 import { Button, TextField, Switch, FormControlLabel } from '@material-ui/core';
+import ValidacoesCadastro from '../../contexts/ValidacoesCadastro';
 
-function DadosPessoais({aoEnviar, validacoes}) {
+function DadosPessoais({ aoEnviar }) {
     const [nome, setNome] = useState("");
     const [sobrenome, setSobrenome] = useState("");
     const [cpf, setCpf] = useState("");
     const [promocoes, setPromocoes] = useState(true);
     const [novidades, setNovidades] = useState(true);
-    const [erros, setErros] = useState({cpf:{valido:true, texto: ""}, nome:{valido:true, texto: ""}});
+    const [erros, setErros] = useState({ cpf: { valido: true, texto: "" }, nome: { valido: true, texto: "" } });
 
-    function validarCampos(event){
-        const {name,value} = event.target;
+    const validacoes = useContext(ValidacoesCadastro); 
+
+    function validarCampos(event) {
+        const { name, value } = event.target;
         const ehValido = validacoes[name](value);
-        const novoEstado = {...erros}
+        const novoEstado = { ...erros }
         novoEstado[name] = ehValido
         setErros(novoEstado)
     }
 
-    function possoEnviar(){
-        for(let campo in erros){
-            if(!erros[campo].valido){
+    function possoEnviar() {
+        for (let campo in erros) {
+            if (!erros[campo].valido) {
                 return false
-            } 
+            }
         }
         return true
     }
 
     return (
-        <form 
+        <form
             onSubmit={
-            (event) => {
-                event.preventDefault();
-                if(possoEnviar()){
-                    aoEnviar({nome, sobrenome, cpf, promocoes, novidades})
-                }
-            }}>
+                (event) => {
+                    event.preventDefault();
+                    if (possoEnviar()) {
+                        aoEnviar({ nome, sobrenome, cpf, promocoes, novidades })
+                    }
+                }}>
             <TextField
                 value={nome}
                 onChange={(event) => {
@@ -77,29 +80,29 @@ function DadosPessoais({aoEnviar, validacoes}) {
                 margin="normal"
                 fullWidth />
 
-            <FormControlLabel 
-                label="Promoções" 
-                control={<Switch 
-                    onChange={(event)=> {
+            <FormControlLabel
+                label="Promoções"
+                control={<Switch
+                    onChange={(event) => {
                         setPromocoes(event.target.checked)
                     }}
-                checked={promocoes}
-                name="promocoes" 
-                color="primary" />} />
+                    checked={promocoes}
+                    name="promocoes"
+                    color="primary" />} />
 
-            <FormControlLabel 
-                label="Novidades" 
-                control={<Switch 
-                    onChange={(event)=>{
+            <FormControlLabel
+                label="Novidades"
+                control={<Switch
+                    onChange={(event) => {
                         setNovidades(event.target.checked)
                     }}
-                checked={novidades} 
-                name="novidades" 
-                color="primary" />} />
+                    checked={novidades}
+                    name="novidades"
+                    color="primary" />} />
 
-            <Button 
-                variant="contained" 
-                color="primary" 
+            <Button
+                variant="contained"
+                color="primary"
                 type="submit">Próximo</Button>
         </form>
     )
